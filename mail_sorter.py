@@ -12,8 +12,8 @@ from email.mime.multipart import MIMEMultipart
 from pathlib import Path
 from dotenv import load_dotenv
 
-# .env ファイルを読み込む
-load_dotenv(dotenv_path=r'C:\shin-agent\.env')
+# .env ファイルを読み込む（このスクリプトと同じフォルダにあるもの）
+load_dotenv(dotenv_path=Path(__file__).parent / '.env')
 
 IMAP_SERVER = os.getenv('IMAP_SERVER')
 IMAP_PORT = int(os.getenv('IMAP_PORT', 993))
