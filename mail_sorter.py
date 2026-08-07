@@ -260,7 +260,7 @@ def main():
         print(f"   要点：{email_data['body'][:100]}")
 
     # output ディレクトリ作成
-    output_dir = Path(r'C:\shin-agent\output')
+    output_dir = Path(__file__).parent / 'output'
     output_dir.mkdir(exist_ok=True)
 
     # ファイル保存
