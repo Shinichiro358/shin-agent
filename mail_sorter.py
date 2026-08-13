@@ -6,9 +6,6 @@ from email.header import decode_header
 from datetime import datetime
 import os
 import re
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -188,44 +185,6 @@ def sort_emails(emails):
 
     return excluded, auto_notifications, process_emails
 
-def send_notification_email(process_emails):
-    """判定対象メールがあった場合、通知メールを送信"""
-    if not process_emails:
-        return
-
-    try:
-        smtp_server = IMAP_SERVER
-        smtp_port = 587
-        sender = IMAP_USER
-        password = IMAP_PASSWORD
-        recipient = 'shc@syncexe.com'
-
-        # メール本文を作成
-        subject = f"【メール仕分け】判定対象メール {len(process_emails)}件"
-
-        body = "判定対象メールが見つかりました。\n\n"
-        for i, email_data in enumerate(process_emails, 1):
-            body += f"{i}. {email_data['sender']}\n"
-            body += f"   件名：{email_data['subject']}\n"
-            body += f"   要点：{email_data['body'][:150]}\n\n"
-
-        # SMTP接続
-        with smtplib.SMTP(smtp_server, smtp_port) as server:
-            server.starttls()
-            server.login(sender, password)
-
-            # メール送信
-            msg = MIMEMultipart()
-            msg['From'] = sender
-            msg['To'] = recipient
-            msg['Subject'] = subject
-            msg.attach(MIMEText(body, 'plain', 'utf-8'))
-
-            server.send_message(msg)
-
-    except Exception as e:
-        print(f"通知メール送信エラー: {e}")
-
 def main():
     print("メール取得中...")
 
@@ -284,12 +243,6 @@ def main():
             f.write(f"   要点：{email_data['body'][:100]}\n")
 
     print(f"\n結果を保存しました: {output_file}")
-
-    # 判定対象メールがあれば通知を送信
-    if process_emails:
-        print("\n通知メール送信中...")
-        send_notification_email(process_emails)
-        print("通知メールを送信しました")
 
 if __name__ == '__main__':
     main()
